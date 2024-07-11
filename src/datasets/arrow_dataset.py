@@ -6243,7 +6243,11 @@ def _concatenate_map_style_datasets(
         _check_if_features_can_be_aligned([dset.features for dset in dsets])
     else:
         if not all(dset.num_rows == dsets[0].num_rows for dset in dsets):
-            raise ValueError(f"Number of rows must match for all datasets. Found {[(dset.num_rows, dsets[0].num_rows) for dset in dsets if dset.num_rows != dsets[0].num_rows]}.")
+            mismatched_dsets = [(i, dset.num_rows) for i, dset in enumerate(dsets) if dset.num_rows != dsets[0].num_rows]
+            raise ValueError(
+                f"Number of rows must match for all datasets. "
+                f"Expected {dsets[0].num_rows} rows but found mismatches in datasets: {mismatched_dsets}."
+            )
         _check_column_names([col_name for dset in dsets for col_name in dset._data.column_names])
 
     # Find common format or reset format
